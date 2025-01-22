@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package person;
+
+option go_package = "./person";
+
+service PersonService {
+  rpc PersonCreate (PersonCreateRequest) returns (PersonCreateReply);
+  rpc PersonList (PersonListRequest) returns (PersonListReply);
+}
+
+message Person {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message PersonCreateRequest {
+  Person person = 1;
+}
+
+message PersonCreateReply {
+  Person person = 1;
+}
+
+message PersonListRequest {}
+
+message PersonListReply {
+  repeated Person persons = 1;
+}
