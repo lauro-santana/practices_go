@@ -2,7 +2,21 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
+
+type builder struct {
+	sql *strings.Builder
+	q   *queue
+}
+
+func createBuilder() *builder {
+	return &builder{sql: &strings.Builder{}, q: createQueue()}
+}
+
+func (b *builder) buildSql() {
+	b.q.buildSql(b.sql)
+}
 
 type queue struct {
 	head *node
@@ -10,17 +24,16 @@ type queue struct {
 }
 
 type node struct {
-	value int
+	value string
 	next  *node
-	prev  *node
 }
 
 func createQueue() *queue {
 	return &queue{}
 }
 
-func (q *queue) add(i int) {
-	n := &node{value: i}
+func (q *queue) add(v string) {
+	n := &node{value: v}
 
 	if q.head == nil {
 		q.head = n
@@ -33,13 +46,12 @@ func (q *queue) add(i int) {
 		return
 	}
 	tail.next = n
-	n.prev = tail
 	q.size++
 }
 
-func (q *queue) get() int {
+func (q *queue) get() string {
 	if q.head == nil {
-		return 0
+		return ""
 	}
 
 	n := q.head
@@ -48,7 +60,7 @@ func (q *queue) get() int {
 	return n.value
 }
 
-func getTail(n *node, v int) *node {
+func getTail(n *node, v string) *node {
 	if n.value == v {
 		return nil
 	}
@@ -58,61 +70,32 @@ func getTail(n *node, v int) *node {
 	return n
 }
 
-func (q *queue) String() string {
-	return stringNode(q.head)
+func (q *queue) buildSql(sql *strings.Builder) {
+	stringNode(sql, q)
 }
 
-func stringNode(n *node) string {
-	if n != nil {
-		return fmt.Sprint(n) + stringNode(n.next)
+func stringNode(sql *strings.Builder, q *queue) {
+	if q.head != nil {
+		sql.WriteString(q.head.value)
+		q.head = q.head.next
+		q.size--
+		stringNode(sql, q)
+		return
 	}
 
-	return ""
+	sql.WriteString(";")
 }
 
 func main() {
-	fmt.Println(testQueue())
-	q := createQueue()
+	builder := createBuilder()
 
 	for v := range 10 {
-		q.add(v)
-		q.add(v)
+		builder.q.add(fmt.Sprint(v))
+		builder.q.add(fmt.Sprint(v))
 	}
 
-	fmt.Println(q.get())
-	fmt.Println(q)
-	fmt.Println(q.get())
-	fmt.Println(q)
-}
-
-func testQueue() bool {
-	q := createQueue()
-
-	for v := range 10 {
-		q.add(v)
-		q.add(v)
-	}
-
-	if q.size != 10 {
-		return false
-	}
-
-	q.get()
-	if q.size != 9 {
-		return false
-	}
-
-	return testPoint(q.head)
-}
-
-func testPoint(n *node) bool {
-	if n.next != nil {
-		if fmt.Sprintf("%p", n) == fmt.Sprintf("%p", n.next.prev) {
-			return testPoint(n.next)
-		} else {
-			return false
-		}
-	}
-
-	return true
+	fmt.Println(builder.q)
+	builder.buildSql()
+	fmt.Println(builder.sql.String())
+	fmt.Println(builder.q)
 }

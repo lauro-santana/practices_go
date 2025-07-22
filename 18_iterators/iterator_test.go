@@ -75,7 +75,7 @@ func Range(size int) []int {
 func Operation(v int) {}
 
 func SetupSlice() []int {
-	return Range(10000000)
+	return Range(100)
 }
 
 func BenchmarkFilterIterator(b *testing.B) {

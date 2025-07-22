@@ -18,20 +18,8 @@ import (
 // 	UpdatedAt time.Time
 // }
 
-type Animal struct {
-	Id        string `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
-	Name      string `gorm:"type:varchar(20);not null;"`
-	Emoji     string `gorm:"type:varchar(10);not null"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-
-type Food struct {
-	Id        string `gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
-	Name      string `gorm:"type:varchar(20);not null;"`
-	Emoji     string `gorm:"type:varchar(10);not null"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+type Teste struct {
+	gorm.Model
 }
 
 func returnUrl(url string) string {
@@ -65,26 +53,31 @@ func setup() *gorm.DB {
 		panic(err)
 	}
 	// Migrate the schema
-	err = db.AutoMigrate(&Animal{}, &Food{})
+	err = db.AutoMigrate(&Teste{})
 	if err != nil {
 		panic(err)
 	}
 	return db
 }
 
-func Insert(db *gorm.DB, ob Animal) {
-	err := db.Create(&ob).Error
-	if err != nil {
-		panic(err)
+func Insert(db *gorm.DB, i int) {
+	for c := 0; c < i; c++ {
+		ob := Teste{}
+		err := db.Create(&ob).Error
+		if err != nil {
+			panic(err)
+		}
 	}
-	fmt.Println(ob.Id)
 }
 
 func main() {
 	db := setup()
 
-	Insert(db, Animal{Name: "Dog", Emoji: "\U0001F431"})
-	db.Select(&Animal{}, "Id")
-	var a Animal
-	db.Find(a)
+	start := time.Now()
+	Insert(db, 1)
+	fmt.Println(time.Since(start))
+	// Insert(db, Animal{Name: "Dog", Emoji: "\U0001F431"})
+	// db.Select(&Animal{}, "Id")
+	// var a Animal
+	// db.Find(a)
 }

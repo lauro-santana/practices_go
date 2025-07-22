@@ -17,7 +17,8 @@ func (i *Iterator[E]) Next() bool {
 	return i.index < len(i.Slice)
 }
 
-func FilterYield[Slice ~[]E, E any](s Slice, filter func(E) bool) func(yield func(E) bool) {
+func FilterYield[Slice ~[]E, E any](s Slice,
+	filter func(E) bool) func(yield func(E) bool) {
 	return func(yield func(E) bool) {
 		for _, v := range s {
 			if filter(v) && !yield(v) {
