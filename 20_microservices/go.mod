@@ -2,7 +2,11 @@ module movie.com
 
 go 1.24.1
 
-require github.com/hashicorp/consul/api v1.32.1
+require (
+	github.com/hashicorp/consul/api v1.32.1
+	google.golang.org/grpc v1.74.2
+	google.golang.org/protobuf v1.36.6
+)
 
 require (
 	github.com/armon/go-metrics v0.4.1 // indirect
@@ -20,5 +24,8 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
-	golang.org/x/sys v0.31.0 // indirect
+	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250528174236-200df99c418a // indirect
 )
